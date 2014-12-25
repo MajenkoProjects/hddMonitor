@@ -82,6 +82,13 @@ int main(int argc, char **argv) {
         return 10;
     }
 
+    // All is ready. Let's fork.
+
+    int pid = fork();
+    if (pid) {
+        return 0;
+    }
+
     while (1) {
         service(sockfd);
     }
