@@ -1,0 +1,15 @@
+Source: hddmonitor-udpclient
+Section: unknown
+Priority: extra
+Maintainer: Matt Jenkins <matt@majenko.co.uk>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.3
+#Homepage: <insert the upstream URL, if relevant>
+#Vcs-Git: git://git.debian.org/collab-maint/hddmonitor-udpclient.git
+#Vcs-Browser: http://git.debian.org/?p=collab-maint/hddmonitor-udpclient.git;a=summary
+
+Package: hddmonitor-udpclient
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: UDP Client for hddMonitor
+ UDP Client for hddMonitor

@@ -1,12 +1,12 @@
 #! /bin/sh
 ### BEGIN INIT INFO
-# Provides: hddmonitor-udpserver
+# Provides: hddmonitor-udpclient
 # Required-Start: ${all}
 # Required-Stop: ${all}
 # Default-Start: 2 3 4 5
 # Default-Stop: 0 1 6
-# Short-Description: hddMonitor UDP Server
-# Description: hddMonitor UDP Server
+# Short-Description: hddMonitor UDP Client
+# Description: hddMonitor UDP Client
 ### END INIT INFO
 
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
@@ -17,18 +17,18 @@ PATH=/sbin:/usr/sbin:/bin:/usr/bin
 
 case "$1" in
     start|restart|reload|force-reload)
-        log_daemon_msg "Starting HDD Monitor server" "${device}" || true
-        if UDPServer "${device}"; then
+        log_daemon_msg "Starting HDD Monitor client" "${ip}" || true
+        if UDPClient "${ip}"; then
             log_end_msg 0 || true
         else
             log_end_msg 1 || true
         fi
         ;;  
     restart|reload|force-reload)
-        log_daemon_msg "Restarting HDD Monitor server" "${device}" || true
-        killall UDPServer
+        log_daemon_msg "Restarting HDD Monitor client" "${ip}" || true
+        killall UDPClient
         sleep 1
-        if UDPServer "${device}"; then
+        if UDPClient "${ip}"; then
             log_end_msg 0 || true
         else
             log_end_msg 1 || true
@@ -36,8 +36,8 @@ case "$1" in
         log_end_msg 1 || true
         ;;
     stop)
-        log_daemon_msg "Stopping HDD Monitor server" "${device}" || true
-        killall UDPServer
+        log_daemon_msg "Stopping HDD Monitor client" "${ip}" || true
+        killall UDPClient
         log_end_msg 0 || true
         ;;
     *)

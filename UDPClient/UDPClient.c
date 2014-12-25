@@ -50,6 +50,10 @@ int main(int argc, char **argv) {
 	uint64_t lastRead=0;
 	uint64_t lastWrite=0;
 
+    if (fork()) {
+        return 0;
+    }
+
 	while (1) {
 		uint64_t rv = 0;
 		uint64_t wv = 0;

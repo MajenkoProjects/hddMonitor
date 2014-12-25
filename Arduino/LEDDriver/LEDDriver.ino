@@ -1,6 +1,9 @@
 #include <Wire.h>
 #include <TLC59116.h>
 
+#pragma parameter upload.precmd=sudo /etc/init.d/hddmonitor-udpserver stop
+#pragma parameter upload.postcmd=sudo /etc/init.d/hddmonitor-udpserver start
+
 TLC59116 board1(0);
 
 struct drive {
@@ -77,11 +80,11 @@ void loop() {
 			setColor(drives[i].writeValue, drives[i].red_w, drives[i].green_w, drives[i].blue_w);
 	
 			if (drives[i].readValue > 0) {
-				drives[i].readValue--;
+				drives[i].readValue/=2;
 			}
 	
 			if (drives[i].writeValue > 0) {
-				drives[i].writeValue--;
+				drives[i].writeValue/=2;
 			}
 		}
 	}
