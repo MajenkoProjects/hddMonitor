@@ -16,7 +16,19 @@ or IP address of the router.
 
 $ ./UDPClient my.desktop.computer.com
 
-It doesn't (yet) auto-fork, so you can put it in the backgroud with an &:
+Debian / Ubuntu package
+=======================
 
-$ ./UDPClient my.desktop.computer.com &
+You can now create a debian package (.deb) direct from this directory:
+
+    $ dpkg-buildpackage
+
+Once built the .deb package will be in the parent folder.  Install it with:
+
+    $ sudo dpkg -i hddmonitor-udpclient_1.0.0_amd64.deb
+
+(Replace the filename with the proper one for the current version and your architecture).
+
+An init script is then installed and configured.  The IP to communicate with is configured in the file
+/etc/default/hddmonitor
 
