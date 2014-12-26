@@ -15,6 +15,7 @@
 #define PORT_NUM 4444
 
 struct packet {
+    uint32_t id;
     uint64_t readValue;
     uint64_t writeValue;
 };
@@ -38,7 +39,7 @@ void service(int sock) {
     struct packet *packet = (struct packet *)request;
 
     char temp[100];
-    sprintf(temp, "%s %lu %lu\n", inet_ntoa(client_addr.sin_addr), packet->readValue, packet->writeValue);
+    sprintf(temp, "%d %lu %lu\n", packet->id, packet->readValue, packet->writeValue);
     write(arduino, temp, strlen(temp));
 }
 

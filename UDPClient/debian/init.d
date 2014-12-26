@@ -17,18 +17,18 @@ PATH=/sbin:/usr/sbin:/bin:/usr/bin
 
 case "$1" in
     start|restart|reload|force-reload)
-        log_daemon_msg "Starting HDD Monitor client" "${ip}" || true
-        if UDPClient "${ip}"; then
+        log_daemon_msg "Starting HDD Monitor client" "${drive}" || true
+        if UDPClient ${drive} ${id} ${ip}; then
             log_end_msg 0 || true
         else
             log_end_msg 1 || true
         fi
         ;;  
     restart|reload|force-reload)
-        log_daemon_msg "Restarting HDD Monitor client" "${ip}" || true
+        log_daemon_msg "Restarting HDD Monitor client" "${drive}" || true
         killall UDPClient
         sleep 1
-        if UDPClient "${ip}"; then
+        if UDPClient ${drive} ${id} ${ip}; then
             log_end_msg 0 || true
         else
             log_end_msg 1 || true
@@ -36,7 +36,7 @@ case "$1" in
         log_end_msg 1 || true
         ;;
     stop)
-        log_daemon_msg "Stopping HDD Monitor client" "${ip}" || true
+        log_daemon_msg "Stopping HDD Monitor client" "${drive}" || true
         killall UDPClient
         log_end_msg 0 || true
         ;;

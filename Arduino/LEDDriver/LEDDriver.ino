@@ -41,12 +41,7 @@ void loop() {
 			pos = 0;
 			char *tok;
 			tok = strtok(buffer, " \n\r\t");
-			if (!strcmp(tok, "172.16.2.1")) {
-				dr = 0;
-			}
-			if (!strcmp(tok, "172.16.5.1")) {
-				dr = 1;
-			}
+			dr = atoi(tok);
 			if (dr != -1) {
 				tok = strtok(NULL, " \n\r\t");			
 				uint32_t rv = strtoul(tok, NULL, 10);
@@ -80,11 +75,11 @@ void loop() {
 			setColor(drives[i].writeValue, drives[i].red_w, drives[i].green_w, drives[i].blue_w);
 	
 			if (drives[i].readValue > 0) {
-				drives[i].readValue/=2;
+				drives[i].readValue/=1.03;
 			}
 	
 			if (drives[i].writeValue > 0) {
-				drives[i].writeValue/=2;
+				drives[i].writeValue/=1.03;
 			}
 		}
 	}

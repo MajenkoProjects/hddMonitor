@@ -15,6 +15,7 @@
 #define PORT_NUM 4444
 
 struct packet {
+    uint32_t id;
     uint64_t readValue;
     uint64_t writeValue;
 };
@@ -28,13 +29,22 @@ int main(int argc, char **argv) {
     char *tok;
     struct hostent *dest;
     struct in_addr **addr_list;
+    char drivepath[100];
 
-    if (argc != 2) {
-        printf("Usage: %s <host>\n", argv[0]);
+    if (argc != 4) {
+        fprintf(stderr, "Usage: %s <drive> <id> <host>\n", argv[0]);
         return 10;
     }
 
-    dest = gethostbyname(argv[1]);
+    char *drive = argv[1];
+    int id = atoi(argv[2]);
+    dest = gethostbyname(argv[3]);
+
+    if (dest == NULL) {
+        fprintf(stderr, "Error: host %s not found\n", argv[3]);
+        return 10;
+    }
+
     addr_list = (struct in_addr **)dest->h_addr_list;
 
 	bzero(&sa, sizeof(sa));
@@ -43,22 +53,32 @@ int main(int argc, char **argv) {
 	sa.sin_family = AF_INET;
 	
 	if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-		printf("Unable to create socket: %d\n", errno);
+		fprintf(stderr, "Unable to create socket: %d\n", errno);
 		return 10;
 	}
 
 	uint64_t lastRead=0;
 	uint64_t lastWrite=0;
 
+    snprintf(drivepath, 100, "/sys/block/%s/stat", drive);
+    f = fopen(drivepath, "r");
+    if (!f) {
+        fprintf(stderr, "Drive not found: %s\n", drive);
+        return 10;
+    }
+    fclose(f);
+        
     if (fork()) {
         return 0;
     }
+
+    buffer.id = id;
 
 	while (1) {
 		uint64_t rv = 0;
 		uint64_t wv = 0;
 
-		f = fopen("/sys/block/sda/stat", "r");
+		f = fopen(drivepath, "r");
 		fgets(temp, 1023, f);
 		fclose(f);
 
