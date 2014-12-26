@@ -1,10 +1,21 @@
 #include <Wire.h>
 #include <TLC59116.h>
 
+// These two lines will stop and then restart the UDP server on a linux machine
+// if you are using the absolute latest version of UECIDE.
 #pragma parameter upload.precmd=sudo /etc/init.d/hddmonitor-udpserver stop
 #pragma parameter upload.postcmd=sudo /etc/init.d/hddmonitor-udpserver start
 
-TLC59116 board1(0);
+// Define more boards the same as this with a different address.
+TLC59116 board0(0);
+
+// Add the boards to this array
+TLC59116 *boards[16] = {
+	&board0, NULL, NULL, NULL,
+	NULL, NULL, NULL, NULL,
+	NULL, NULL, NULL, NULL,
+	NULL, NULL, NULL, NULL
+};
 
 struct drive {
 	uint32_t readValue;
@@ -17,13 +28,26 @@ struct drive {
 	uint8_t blue_w;
 };
 
-struct drive drives[2] = {
-	{0, 0, 0, 1, 2, 15, 14, 13},
-	{0, 0, 3, 4, 5, 12, 11, 10}
+// Set this to the number of drive entries you have
+#define NDRIVES 2
+
+// Each entry is defined as per the structure just above.  LED numbers (*_r and *_w) are
+// comprised of two parts - the first nibble is the board number, and the second is the
+// channel number on that board.
+struct drive drives[NDRIVES] = {
+	{0, 0, 0x03, 0x04, 0x05, 0x00, 0x01, 0x02},
+	{0, 0, 0x0C, 0x0B, 0x0A, 0x0F, 0x0E, 0x0D},
 };
 
 void setup() {
-	board1.begin();
+	// Start any defined boards ...
+	for (uint8_t i = 0; i < 16; i++) {
+		if (boards[i] != NULL) {
+			boards[i]->begin();
+		}
+	}
+	
+	// ... as well as the serial port
 	Serial.begin(9600);
 }
 
@@ -42,7 +66,7 @@ void loop() {
 			char *tok;
 			tok = strtok(buffer, " \n\r\t");
 			dr = atoi(tok);
-			if (dr != -1) {
+			if (dr < NDRIVES) {
 				tok = strtok(NULL, " \n\r\t");			
 				uint32_t rv = strtoul(tok, NULL, 10);
 				tok = strtok(NULL, " \n\r\t");
@@ -70,7 +94,7 @@ void loop() {
 	if (millis() - ts > 0) {
 		ts = millis();
 
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < NDRIVES; i++) {
 			setColor(drives[i].readValue, drives[i].red_r, drives[i].green_r, drives[i].blue_r);
 			setColor(drives[i].writeValue, drives[i].red_w, drives[i].green_w, drives[i].blue_w);
 	
@@ -130,7 +154,21 @@ void setColor(uint32_t val, uint8_t r, uint8_t g, uint8_t b) {
 		val = 0;
 	}
 
-	board1.analogWrite(r, red);
-	board1.analogWrite(g, green);
-	board1.analogWrite(b, blue);
+	uint8_t br = r >> 4;
+	r &= 0x0F;
+
+	uint8_t bg = g >> 4;
+	g &= 0x0F;
+
+	uint8_t bb = b >> 4;
+	b &= 0x0F;
+
+	if (boards[br] == NULL) return;
+	if (boards[bg] == NULL) return;
+	if (boards[bb] == NULL) return;
+
+	boards[br]->analogWrite(r, red);
+	boards[bg]->analogWrite(g, green);
+	boards[bb]->analogWrite(b, blue);
+
 }
