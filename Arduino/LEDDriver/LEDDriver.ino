@@ -8,10 +8,23 @@
 
 // Define more boards the same as this with a different address.
 TLC59116 board0(0);
+TLC59116 board1(1);
+
+// Select your fade method.
+//
+// 0 is a logarithmic fade - rapidly fade down to red then slow down
+// giving a nice afterglow.
+//
+// 1 is a linear fade. Fade smoothly through the colours to off.
+//
+// 2 is the same logarithmic as 0 but much much faster. It makes
+// for a good flash effect.
+
+#define FADE 0
 
 // Add the boards to this array
 TLC59116 *boards[16] = {
-	&board0, NULL, NULL, NULL,
+	&board0, &board1, NULL, NULL,
 	NULL, NULL, NULL, NULL,
 	NULL, NULL, NULL, NULL,
 	NULL, NULL, NULL, NULL
@@ -32,9 +45,11 @@ struct drive {
 // comprised of two parts - the first nibble is the board number, and the second is the
 // channel number on that board.
 struct drive drives[] = {
-	{0, 0, 0x03, 0x04, 0x05, 0x00, 0x01, 0x02},
-	{0, 0, 0x0C, 0x0B, 0x0A, 0x0F, 0x0E, 0x0D},
-	{0, 0, 0x06, 0x07, 0x08, 0xF9, 0xF9, 0xF9},
+	{0, 0, 0x1D, 0x1E, 0x1F, 0x13, 0x14, 0x15},
+	{0, 0, 0x1A, 0x1B, 0x1C, 0x10, 0x11, 0x12},
+	{0, 0, 0x17, 0x18, 0x19, 0x00, 0x01, 0x0F},
+	{0, 0, 0x0E, 0x0D, 0x0C, 0x02, 0x03, 0x04},
+	{0, 0, 0x0B, 0x0A, 0x09, 0x05, 0x06, 0x07},
 };
 
 #define NDRIVES (sizeof(drives) / sizeof(struct drive))
@@ -103,6 +118,8 @@ void loop() {
 			setColor(drives[i].readValue, drives[i].red_r, drives[i].green_r, drives[i].blue_r);
 			setColor(drives[i].writeValue, drives[i].red_w, drives[i].green_w, drives[i].blue_w);
 
+
+#if FADE==0
 			if (drives[i].readValue > 0) {
 				drives[i].readValue /= 1.03;
 			}
@@ -110,6 +127,26 @@ void loop() {
 			if (drives[i].writeValue > 0) {
 				drives[i].writeValue /= 1.03;
 			}
+#elif FADE==1
+			if (drives[i].readValue > 0) {
+				drives[i].readValue --;
+			}
+
+			if (drives[i].writeValue > 0) {
+				drives[i].writeValue --;
+			}
+#elif FADE==2
+			if (drives[i].readValue > 0) {
+				drives[i].readValue /= 2;
+			}
+
+			if (drives[i].writeValue > 0) {
+				drives[i].writeValue /= 2;
+			}
+#else
+#error Invalid fade value selectd.
+#endif
+
 		}
 	}
 }
