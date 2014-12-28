@@ -19,7 +19,7 @@ TLC59116 *boards[16] = {
 
 struct drive {
 	uint32_t readValue;
-	uint32_t writeValue; 
+	uint32_t writeValue;
 	uint8_t red_r;
 	uint8_t green_r;
 	uint8_t blue_r;
@@ -46,7 +46,7 @@ void setup() {
 			boards[i]->begin();
 		}
 	}
-	
+
 	// ... as well as the serial port
 	Serial.begin(9600);
 }
@@ -57,32 +57,37 @@ void loop() {
 	static char buffer[20];
 	static int pos = 0;
 	static uint32_t ts = millis();
-	
+
 	if (Serial.available()) {
 		int c = Serial.read();
+
 		if (c == '\n') {
 			int dr = -1;
 			pos = 0;
 			char *tok;
 			tok = strtok(buffer, " \n\r\t");
 			dr = atoi(tok);
+
 			if (dr < NDRIVES) {
-				tok = strtok(NULL, " \n\r\t");			
+				tok = strtok(NULL, " \n\r\t");
 				uint32_t rv = strtoul(tok, NULL, 10);
 				tok = strtok(NULL, " \n\r\t");
 				uint32_t wv = strtoul(tok, NULL, 10);
-	
+
 				if (rv > drives[dr].readValue) {
 					drives[dr].readValue = rv;
 				}
+
 				if (wv > drives[dr].writeValue) {
 					drives[dr].writeValue = wv;
 				}
-				if (drives[dr].readValue > 255*5) {
-					drives[dr].readValue = 255*5;
+
+				if (drives[dr].readValue > 255 * 5) {
+					drives[dr].readValue = 255 * 5;
 				}
-				if (drives[dr].writeValue > 255*5) {
-					drives[dr].writeValue = 255*5;
+
+				if (drives[dr].writeValue > 255 * 5) {
+					drives[dr].writeValue = 255 * 5;
 				}
 			}
 		} else {
@@ -97,13 +102,13 @@ void loop() {
 		for (int i = 0; i < NDRIVES; i++) {
 			setColor(drives[i].readValue, drives[i].red_r, drives[i].green_r, drives[i].blue_r);
 			setColor(drives[i].writeValue, drives[i].red_w, drives[i].green_w, drives[i].blue_w);
-	
+
 			if (drives[i].readValue > 0) {
-				drives[i].readValue/=1.03;
+				drives[i].readValue /= 1.03;
 			}
-	
+
 			if (drives[i].writeValue > 0) {
-				drives[i].writeValue/=1.03;
+				drives[i].writeValue /= 1.03;
 			}
 		}
 	}
@@ -112,7 +117,7 @@ void loop() {
 void setColor(uint32_t val, uint8_t r, uint8_t g, uint8_t b) {
 	uint8_t red = 0;
 	uint8_t green = 0;
-	uint8_t blue= 0;
+	uint8_t blue = 0;
 
 	if (val > 255) {
 		red = 255;
@@ -156,19 +161,18 @@ void setColor(uint32_t val, uint8_t r, uint8_t g, uint8_t b) {
 
 	uint8_t br = r >> 4;
 	r &= 0x0F;
-
 	uint8_t bg = g >> 4;
 	g &= 0x0F;
-
 	uint8_t bb = b >> 4;
 	b &= 0x0F;
 
-	if (boards[br] == NULL) return;
-	if (boards[bg] == NULL) return;
-	if (boards[bb] == NULL) return;
+	if (boards[br] == NULL) { return; }
+
+	if (boards[bg] == NULL) { return; }
+
+	if (boards[bb] == NULL) { return; }
 
 	boards[br]->analogWrite(r, red);
 	boards[bg]->analogWrite(g, green);
 	boards[bb]->analogWrite(b, blue);
-
 }
