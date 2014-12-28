@@ -26,16 +26,16 @@ lights for your remote computers right on your desk.
 
 The system consists of three parts:
 
-* UDPClient
+* hddMonitorClient
 
 This small program monitors the disk in a computer.  It does so by watching
-the contents of /sys/block/sda/stat.  Every time there is a change in the
+the contents of /sys/block/<drive>/stat.  Every time there is a change in the
 read or write count (with a granularity of 100ms) it crafts a small UDP packet
 and fires it at your computer (assuming it has access of course - you may want
 a VPN, or to configure your router to forward the UDP packets to your
 computer).
 
-* UDPServer
+* hddMonitorServer
 
 This small program receives the UDP packets, decodes them, and converts them
 into a serial data stream consisting of three parts - the IP address of the
