@@ -1,4 +1,4 @@
-hddmonitor-udpclient (1.0.0) unstable; urgency=low
+hddmonitor (1.0.0) wheezy; urgency=low
 
   * Initial Release.
 

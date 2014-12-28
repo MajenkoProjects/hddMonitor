@@ -1,0 +1,8 @@
+# Server configuration
+#device=/devv/ttyACM0
+
+# Client configuration - replicate this as many times as you need,
+# incrementing the _0 each time.
+#ip_0=172.16.1.1
+#drive_0=sda
+#id_0=1
