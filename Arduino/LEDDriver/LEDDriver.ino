@@ -3,8 +3,8 @@
 
 // These two lines will stop and then restart the UDP server on a linux machine
 // if you are using the absolute latest version of UECIDE.
-#pragma parameter upload.precmd=sudo /etc/init.d/hddmonitor-udpserver stop
-#pragma parameter upload.postcmd=sudo /etc/init.d/hddmonitor-udpserver start
+#pragma parameter upload.precmd=sudo /etc/init.d/hddmonitor stop
+#pragma parameter upload.postcmd=sudo /etc/init.d/hddmonitor start
 
 // Define more boards the same as this with a different address.
 TLC59116 board0(0);
@@ -28,16 +28,16 @@ struct drive {
 	uint8_t blue_w;
 };
 
-// Set this to the number of drive entries you have
-#define NDRIVES 2
-
 // Each entry is defined as per the structure just above.  LED numbers (*_r and *_w) are
 // comprised of two parts - the first nibble is the board number, and the second is the
 // channel number on that board.
-struct drive drives[NDRIVES] = {
+struct drive drives[] = {
 	{0, 0, 0x03, 0x04, 0x05, 0x00, 0x01, 0x02},
 	{0, 0, 0x0C, 0x0B, 0x0A, 0x0F, 0x0E, 0x0D},
+	{0, 0, 0x06, 0x07, 0x08, 0xF9, 0xF9, 0xF9},
 };
+
+#define NDRIVES (sizeof(drives) / sizeof(struct drive))
 
 void setup() {
 	// Start any defined boards ...
