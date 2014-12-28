@@ -39,7 +39,7 @@ void service(int sock) {
     struct packet *packet = (struct packet *)request;
 
     char temp[100];
-    sprintf(temp, "%d %lu %lu\n", packet->id, packet->readValue, packet->writeValue);
+    sprintf(temp, "%d %lu %lu\n", packet->id, (unsigned long)packet->readValue, (unsigned long)packet->writeValue);
     write(arduino, temp, strlen(temp));
 }
 
