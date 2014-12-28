@@ -1,3 +1,9 @@
+hddmonitor (1.0.2) wheezy; urgency=low
+
+  * Fixed bad variable name in default config
+
+ - Matt Jenkins <matt@majenko.co.uk>  Thu, 28 Dec 2014 16:52:00 +0000
+
 hddmonitor (1.0.1) wheezy; urgency=low
 
   * Fixed postinst script for new package name
